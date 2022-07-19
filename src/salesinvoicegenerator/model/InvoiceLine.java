@@ -23,6 +23,8 @@ public class InvoiceLine {
         this.header = header;
     }
 
+    
+
     public String getItemName() {
         return itemName;
     }
@@ -49,6 +51,14 @@ public class InvoiceLine {
 
     public double getLineTotal() {
         return count * itemPrice;
+    }
+
+    public InvoiceHeader getHeader() {
+        return header;
+    }
+
+    public void setHeader(InvoiceHeader header) {
+        this.header = header;
     }
 
     @Override

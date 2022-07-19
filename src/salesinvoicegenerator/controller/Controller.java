@@ -7,6 +7,9 @@ package salesinvoicegenerator.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +30,7 @@ import salesinvoicegenerator.view.SalesFrame;
  * @author KooTy
  */
 public class Controller implements ActionListener, ListSelectionListener {
-    
+   // InvoiceLine lin = new InvoiceLine();
     private SalesFrame frame;
     
     public Controller(SalesFrame frame)
@@ -52,11 +55,11 @@ public class Controller implements ActionListener, ListSelectionListener {
             case "Delete Invoice":
                 deleteInvoice();
                 break;
-            case "Save":
-                save();
+            case "Create New Item":
+                createNewItem();
                 break;
-            case "Cancel":
-                cancel();
+            case "Delete Item":
+                deleteItem();
                 break;
             
             
@@ -69,8 +72,16 @@ public class Controller implements ActionListener, ListSelectionListener {
         System.out.println("Row Seleceted");
         int selectedRow = frame.getInvoiceTable().getSelectedRow();
         System.out.println(selectedRow);
-        ArrayList<InvoiceLine> lines = frame.getInvoiceHeadersList().get(selectedRow).getLines();
-        frame.getInvoiceItem().setModel(new InvoiceLineTableModel(lines));
+        if (selectedRow >= 0)
+        {
+            InvoiceHeader header = frame.getHeaderTableModel().getData().get(selectedRow);
+            ArrayList<InvoiceLine> lines = frame.getInvoiceHeadersList().get(selectedRow).getLines();
+            frame.getInvoiceItem().setModel(new InvoiceLineTableModel(lines));
+            frame.getInvoiceNumber().setText("" + header.getInvoiceNum());
+            frame.getInvoiceDate().setText(header.getInvoiceDate());
+            frame.getCustomerName().setText(header.getCustomerName());
+            frame.getInvoiceTotal().setText("" + header.getInvoiceTotal());
+        }
     }
 
     private void loadFile() {
@@ -89,7 +100,7 @@ public class Controller implements ActionListener, ListSelectionListener {
             {
                 String[] parts = headerLine.split(",");
                 int id = Integer.parseInt(parts[0]);
-                InvoiceHeader invHeader = new InvoiceHeader(id, parts[2], parts[1]);
+                InvoiceHeader invHeader = new InvoiceHeader(id, parts[1], parts[2]);
                 invoiceHeadersList.add(invHeader);
             }
             System.out.println("check");
@@ -101,6 +112,7 @@ public class Controller implements ActionListener, ListSelectionListener {
                 List<String> lineLines = Files.lines(linePath).collect(Collectors.toList());
                 for (String lineLine : lineLines)
                 {
+                    
                     String[] parts = lineLine.split(",");
                     int invId = Integer.parseInt(parts[0]);
                     double price = Double.parseDouble(parts[2]);
@@ -131,18 +143,42 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
 
     private void saveFile() {
+        JFileChooser fc = new JFileChooser();
+        int result = fc.showSaveDialog(frame);
+       
+            
+        
     }
 
     private void createNewInvoice() {
     }
 
     private void deleteInvoice() {
+        int invoiceData = frame.getInvoiceTable().getSelectedRow();
+        InvoiceHeader header = frame.getHeaderTableModel().getData().get(invoiceData);
+        frame.getHeaderTableModel().getData().remove(invoiceData);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        frame.setLineTableModel(new InvoiceLineTableModel(new ArrayList<InvoiceLine>()));
+        frame.getInvoiceItem().setModel(frame.getLineTableModel());
+        frame.getLineTableModel().fireTableDataChanged();
     }
 
-    private void save() {
+    private void createNewItem() {
+        
     }
 
-    private void cancel() {
+    private void deleteItem() {
+        int invoiceData = frame.getInvoiceItem().getSelectedRow();
+        //ArrayList<InvoiceLine> invoiceLinesList = new ArrayList<>();
+        InvoiceLine lin = frame.getLineTableModel().getData().get(invoiceData);
+        frame.getHeaderTableModel().getData().remove(invoiceData);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        frame.getLineTableModel().fireTableDataChanged();
+        frame.getInvoiceNumber().setText("" + lin.getHeader().getInvoiceTotal());
+        //displayInvoices();
     }
-    
+    //private void displayInvoices(){
+         //for (InvoiceHeader header :frame.getInvoiceHeadersList()) {
+          //   System.out.println(header);
+       //  }
 }

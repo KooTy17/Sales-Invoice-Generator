@@ -13,10 +13,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class InvoiceHeaderTableModel extends AbstractTableModel{
     private ArrayList<InvoiceHeader> data;
-    private String[] cols = {"Id", "Customer Name", "Invoice Date"};
+    private String[] cols = {"Id", "Invoice Date", "Customer Name", "Invoice Total"};
 
     public InvoiceHeaderTableModel(ArrayList<InvoiceHeader> data) {
         this.data = data;
+    }
+
+    public ArrayList<InvoiceHeader> getData() {
+        return data;
     }
 
     @Override
@@ -40,8 +44,10 @@ public class InvoiceHeaderTableModel extends AbstractTableModel{
                 return header.getInvoiceDate();
             case 2:
                 return header.getCustomerName();
+            case 3:
+                return header.getInvoiceTotal();
         }
-        return "Welcome";
+        return null;
     }
     @Override
     public String getColumnName(int column)

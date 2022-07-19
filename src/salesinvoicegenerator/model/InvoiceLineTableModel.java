@@ -15,11 +15,13 @@ public class InvoiceLineTableModel extends AbstractTableModel{
     
     private ArrayList<InvoiceLine> data;
     
-    private String[] cols = {"Item Name", "Unit Price", "Count"};
+    private String[] cols = {"Item Name", "Unit Price", "Count", "Item Total"};
 
     public InvoiceLineTableModel(ArrayList<InvoiceLine> data) {
         this.data = data;
     }
+
+    
 
     @Override
     public int getRowCount() {
@@ -42,11 +44,21 @@ public class InvoiceLineTableModel extends AbstractTableModel{
                 return line.getItemPrice();
             case 2:
                 return line.getCount();
+            case 3:
+                return line.getLineTotal();
                 
         }
             
             return "";
              
+    }
+
+    public ArrayList<InvoiceLine> getData() {
+        return data;
+    }
+
+    public void setData(ArrayList<InvoiceLine> data) {
+        this.data = data;
     }
 
     @Override

@@ -55,6 +55,10 @@ public class InvoiceHeader {
         return total;
     }
 
+    public void setLines(ArrayList<InvoiceLine> lines) {
+        this.lines = lines;
+    }
+
     public ArrayList<InvoiceLine> getLines() {
         if (lines == null)
         {
