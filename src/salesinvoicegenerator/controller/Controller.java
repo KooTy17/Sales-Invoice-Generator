@@ -93,9 +93,9 @@ public class Controller implements ActionListener, ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        System.out.println("Row Seleceted");
+       // System.out.println("Row Seleceted");
         int selectedRow = frame.getInvoiceTable().getSelectedRow();
-        System.out.println(selectedRow);
+       // System.out.println(selectedRow);
         if (selectedRow >= 0)
         {
             
@@ -137,7 +137,8 @@ public class Controller implements ActionListener, ListSelectionListener {
                     invoiceHeadersList.add(invHeader);
                 }
                 catch (ParseException ex) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Date Format Error");
+            
         }
                 
             }
@@ -165,7 +166,7 @@ public class Controller implements ActionListener, ListSelectionListener {
         }
         catch(IOException ex)
         {
-            ex.printStackTrace();
+            System.out.println("File Error");
         }
     }
     private InvoiceHeader getInvoiceHeaderById(ArrayList<InvoiceHeader> invoices, int id)
@@ -220,6 +221,7 @@ public class Controller implements ActionListener, ListSelectionListener {
 
         }
         catch (IOException ex) {
+            System.out.println("File Error");
             
         }
     }
@@ -237,7 +239,6 @@ public class Controller implements ActionListener, ListSelectionListener {
         createNewInvoiceDialog.setVisible(false);
         String invName = createNewInvoiceDialog.getInvoiceCustomerName().getText();
         String inveDate = createNewInvoiceDialog.getInvoiceDate().getText();
-        
         createNewInvoiceDialog.dispose();
         createNewInvoiceDialog = null;
         try
@@ -257,22 +258,12 @@ public class Controller implements ActionListener, ListSelectionListener {
         frame.getHeaderTableModel().fireTableDataChanged();
         
         } catch (ParseException ex) {
+            System.out.println("Date Format Error");
             
         }
                 
         
-       /* int invNum = 0;
-        for (InvoiceHeader inv : frame.getInvoicesArray()) {
-            if (inv.getNum() > invNum) {
-                invNum = inv.getNum();
-            }
-        }
-        invNum++;
-        InvoiceHeader newInv = new InvoiceHeader(invNum, custName, d);
-        frame.getInvoicesArray().add(newInv);
-        frame.getHeaderTableModel().fireTableDataChanged();
-        headerDialog.dispose();
-        headerDialog = null;*/
+       
     }
     
     private void cancelInoivceButton() {
@@ -292,8 +283,33 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
 
     private void createNewItem() {
+        createNewItemDialog = new CreateNewItemDialog(frame);
+        createNewItemDialog.setVisible(true);
         
         
+    }
+    
+    private void createItemButton() {
+        createNewItemDialog.setVisible(false);
+        String itemName = createNewItemDialog.getItemNameField().getText();
+        String itemCount = createNewItemDialog.getItemCountField().getText();
+        String itemPrice = createNewItemDialog.getItemPriceField().getText();
+        int count = Integer.parseInt(itemCount);
+        double price = Integer.parseInt(itemPrice);
+        int selectedHeader = frame.getInvoiceTable().getSelectedRow();
+        InvoiceHeader header = frame.getHeaderTableModel().getHeaderData().get(selectedHeader);
+        InvoiceLine line = new InvoiceLine(itemName, price, count, header);
+        header.addInvoiceLine(line);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        frame.getLineTableModel().fireTableDataChanged();
+    }
+    
+    
+    private void cancelCreateItem() {
+        
+        createNewItemDialog.setVisible(false);
+        createNewItemDialog.dispose();
+        createNewItemDialog = null;
     }
 
     private void deleteItem() {
@@ -304,16 +320,11 @@ public class Controller implements ActionListener, ListSelectionListener {
         frame.getHeaderTableModel().fireTableDataChanged();
         frame.getLineTableModel().fireTableDataChanged();
         frame.getInvoiceNumber().setText("" + line.getHeader().getInvoiceTotal());
-        //displayInvoices();
-    }
-
-    private void createItemButton() {
         
     }
 
-    private void cancelCreateItem() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    
+
 
     
 

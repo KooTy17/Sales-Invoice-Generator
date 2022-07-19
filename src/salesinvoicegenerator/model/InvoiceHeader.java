@@ -70,6 +70,11 @@ public class InvoiceHeader {
         return lines;
     }
     
+    public void addInvoiceLine(InvoiceLine line)
+    {
+        getLines().add(line);
+    }
+    
     @Override
     public String toString() {
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
