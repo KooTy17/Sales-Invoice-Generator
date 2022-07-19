@@ -16,35 +16,31 @@ import javax.swing.JTextField;
  */
 public class CreateNewInvoiceDialog extends JDialog{
     private JTextField invoiceCustomerName;
-    private JTextField invDateField;
-    private JLabel custNameLbl;
-    private JLabel invDateLbl;
-    private JButton okBtn;
-    private JButton cancelBtn;
+    private JTextField invoiceDate;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JButton createInvoiceButton;
+    private JButton cancelInvoiceButton;
     
     public CreateNewInvoiceDialog(SalesFrame frame)
     {
-        custNameLbl = new JLabel("Customer Name:");
+        jLabel1 = new JLabel("Invoice Date :");
         invoiceCustomerName = new JTextField(20);
-        invDateLbl = new JLabel("Invoice Date:");
-        invDateField = new JTextField(20);
-        okBtn = new JButton("OK");
-        cancelBtn = new JButton("Cancel");
-        
-        okBtn.setActionCommand("Create Invoice Button");
-        cancelBtn.setActionCommand("Cancel Create Invoice");
-        
-        okBtn.addActionListener(frame.getController());
-        cancelBtn.addActionListener(frame.getController());
+        jLabel2 = new JLabel("Customer Name :");
+        invoiceDate = new JTextField(20);
+        createInvoiceButton = new JButton("Create");
+        cancelInvoiceButton = new JButton("Cancel");
+        createInvoiceButton.setActionCommand("Create Invoice Button");
+        cancelInvoiceButton.setActionCommand("Cancel Create Invoice");
+        createInvoiceButton.addActionListener(frame.getController());
+        cancelInvoiceButton.addActionListener(frame.getController());
         setLayout(new GridLayout(3, 2));
-        
-        add(invDateLbl);
-        add(invDateField);
-        add(custNameLbl);
+        add(jLabel1);
+        add(invoiceDate);
+        add(jLabel2);
         add(invoiceCustomerName);
-        add(okBtn);
-        add(cancelBtn);
-        
+        add(createInvoiceButton);
+        add(cancelInvoiceButton);
         pack();
         
     }
@@ -54,7 +50,7 @@ public class CreateNewInvoiceDialog extends JDialog{
     }
 
     public JTextField getInvoiceDate() {
-        return invDateField;
+        return invoiceDate;
     
     }
 }
