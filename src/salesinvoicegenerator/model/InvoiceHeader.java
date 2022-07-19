@@ -4,7 +4,10 @@
  */
 package salesinvoicegenerator.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -12,11 +15,11 @@ import java.util.ArrayList;
  */
 public class InvoiceHeader {
     private int invoiceNum;
-    private String invoiceDate;
+    private Date invoiceDate;
     private String customerName;
     private ArrayList<InvoiceLine> lines;
 
-    public InvoiceHeader(int invoiceNum, String invoiceDate, String customerName) {
+    public InvoiceHeader(int invoiceNum, Date invoiceDate, String customerName) {
         this.invoiceNum = invoiceNum;
         this.invoiceDate = invoiceDate;
         this.customerName = customerName;
@@ -30,11 +33,11 @@ public class InvoiceHeader {
         this.invoiceNum = invoiceNum;
     }
 
-    public String getInvoiceDate() {
+    public Date getInvoiceDate() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(String invoiceDate) {
+    public void setInvoiceDate(Date invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
@@ -69,7 +72,8 @@ public class InvoiceHeader {
     
     @Override
     public String toString() {
-        return "InvoiceHeader{" + "invoiceNum=" + invoiceNum + ", invoiceDate=" + invoiceDate + ", customerName=" + customerName + '}';
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        return "" + getInvoiceNum() + "," + df.format(getInvoiceDate()) + "," + getCustomerName();
     }
 
     

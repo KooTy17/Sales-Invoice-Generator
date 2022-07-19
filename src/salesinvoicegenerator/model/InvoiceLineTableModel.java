@@ -13,19 +13,19 @@ import javax.swing.table.AbstractTableModel;
  */
 public class InvoiceLineTableModel extends AbstractTableModel{
     
-    private ArrayList<InvoiceLine> data;
+    private ArrayList<InvoiceLine> lineData;
     
     private String[] cols = {"Item Name", "Unit Price", "Count", "Item Total"};
 
-    public InvoiceLineTableModel(ArrayList<InvoiceLine> data) {
-        this.data = data;
+    public InvoiceLineTableModel(ArrayList<InvoiceLine> lineData) {
+        this.lineData = lineData;
     }
 
     
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return lineData.size();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class InvoiceLineTableModel extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        InvoiceLine line = data.get(rowIndex);
+        InvoiceLine line = lineData.get(rowIndex);
         switch(columnIndex)
         {
             case 0:
@@ -53,12 +53,12 @@ public class InvoiceLineTableModel extends AbstractTableModel{
              
     }
 
-    public ArrayList<InvoiceLine> getData() {
-        return data;
+    public ArrayList<InvoiceLine> getLineData() {
+        return lineData;
     }
 
     public void setData(ArrayList<InvoiceLine> data) {
-        this.data = data;
+        this.lineData = data;
     }
 
     @Override

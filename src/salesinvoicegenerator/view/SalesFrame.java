@@ -4,6 +4,8 @@
  */
 package salesinvoicegenerator.view;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -297,6 +299,10 @@ public class SalesFrame extends javax.swing.JFrame {
     private ArrayList<InvoiceLine> invoiceLineList;
     private InvoiceHeaderTableModel headerTableModel;
     private InvoiceLineTableModel lineTableModel;
+    private CreateNewInvoiceDialog createNewInvoiceDialog;
+    private CreateNewItemDialog createNewItemDialog;
+    
+    private DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 
     public Controller getController() {
         return controller;
@@ -352,5 +358,33 @@ public class SalesFrame extends javax.swing.JFrame {
     public JLabel getInvoiceTotal() {
         return invoiceTotal;
     }
+
+    public ArrayList<InvoiceLine> getInvoiceLineList() {
+        return invoiceLineList;
+    }
+
+    public void setInvoiceLineList(ArrayList<InvoiceLine> invoiceLineList) {
+        this.invoiceLineList = invoiceLineList;
+        lineTableModel = new InvoiceLineTableModel(invoiceLineList);
+        this.invoiceItem.setModel(lineTableModel);
+    }
+
+    public CreateNewInvoiceDialog getCreateNewInvoiceDialog() {
+        return createNewInvoiceDialog;
+    }
+
+    public void setCreateNewInvoiceDialog(CreateNewInvoiceDialog createNewInvoiceDialog) {
+        this.createNewInvoiceDialog = createNewInvoiceDialog;
+    }
+
+    public CreateNewItemDialog getCreateNewItemDialog() {
+        return createNewItemDialog;
+    }
+
+    public void setCreateNewItemDialog(CreateNewItemDialog createNewItemDialog) {
+        this.createNewItemDialog = createNewItemDialog;
+    }
+
+    
     
 }

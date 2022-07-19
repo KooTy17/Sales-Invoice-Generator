@@ -23,6 +23,14 @@ public class InvoiceLine {
         this.header = header;
     }
 
+    public InvoiceHeader getHeader() {
+        return header;
+    }
+
+    public void setHeader(InvoiceHeader header) {
+        this.header = header;
+    }
+
     
 
     public String getItemName() {
@@ -53,17 +61,11 @@ public class InvoiceLine {
         return count * itemPrice;
     }
 
-    public InvoiceHeader getHeader() {
-        return header;
-    }
-
-    public void setHeader(InvoiceHeader header) {
-        this.header = header;
-    }
+    
 
     @Override
     public String toString() {
-        return "InvoiceLine{" + "itemName=" + itemName + ", itemPrice=" + itemPrice + ", count=" + count + ", lineTotal=" + getLineTotal() + '}';
+        return "" + getHeader().getInvoiceNum() + "," + getItemName() + "," + getItemPrice() + "," + getCount();
     }
 
     

@@ -14,8 +14,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionEvent;
@@ -23,6 +29,9 @@ import javax.swing.event.ListSelectionListener;
 import salesinvoicegenerator.model.InvoiceHeader;
 import salesinvoicegenerator.model.InvoiceLine;
 import salesinvoicegenerator.model.InvoiceLineTableModel;
+import salesinvoicegenerator.view.CreateNewInvoiceDialog;
+import salesinvoicegenerator.view.CreateNewItemDialog;
+
 import salesinvoicegenerator.view.SalesFrame;
 
 /**
@@ -31,7 +40,10 @@ import salesinvoicegenerator.view.SalesFrame;
  */
 public class Controller implements ActionListener, ListSelectionListener {
    // InvoiceLine lin = new InvoiceLine();
+    private DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
     private SalesFrame frame;
+    private CreateNewInvoiceDialog createNewInvoiceDialog;
+    private CreateNewItemDialog createNewItemDialog;
     
     public Controller(SalesFrame frame)
     {
@@ -52,11 +64,23 @@ public class Controller implements ActionListener, ListSelectionListener {
             case "Create New Invoice":
                 createNewInvoice();
                 break;
+            case "Create Invoice Button":
+                createInvoiceButton();
+                break;
+            case "Cancel Create Invoice":
+                cancelInoivceButton();
+                break;
             case "Delete Invoice":
                 deleteInvoice();
                 break;
             case "Create New Item":
                 createNewItem();
+                break;
+            case "Create Item Button":
+                createItemButton();
+                break;
+            case "Cancel Create Item":
+                cancelCreateItem();
                 break;
             case "Delete Item":
                 deleteItem();
@@ -74,13 +98,18 @@ public class Controller implements ActionListener, ListSelectionListener {
         System.out.println(selectedRow);
         if (selectedRow >= 0)
         {
-            InvoiceHeader header = frame.getHeaderTableModel().getData().get(selectedRow);
+            
             ArrayList<InvoiceLine> lines = frame.getInvoiceHeadersList().get(selectedRow).getLines();
             frame.getInvoiceItem().setModel(new InvoiceLineTableModel(lines));
+            frame.setLineTableModel(new InvoiceLineTableModel(lines));
+            frame.getInvoiceItem().setModel(frame.getLineTableModel());
+            InvoiceHeader header = frame.getHeaderTableModel().getHeaderData().get(selectedRow);
             frame.getInvoiceNumber().setText("" + header.getInvoiceNum());
-            frame.getInvoiceDate().setText(header.getInvoiceDate());
+            frame.getInvoiceDate().setText(df.format(header.getInvoiceDate()));
             frame.getCustomerName().setText(header.getCustomerName());
             frame.getInvoiceTotal().setText("" + header.getInvoiceTotal());
+            
+            
         }
     }
 
@@ -100,8 +129,17 @@ public class Controller implements ActionListener, ListSelectionListener {
             {
                 String[] parts = headerLine.split(",");
                 int id = Integer.parseInt(parts[0]);
-                InvoiceHeader invHeader = new InvoiceHeader(id, parts[1], parts[2]);
-                invoiceHeadersList.add(invHeader);
+                
+                try
+                {
+                    Date invDate = df.parse(parts[1]);
+                    InvoiceHeader invHeader = new InvoiceHeader(id, invDate, parts[2]);
+                    invoiceHeadersList.add(invHeader);
+                }
+                catch (ParseException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
             }
             System.out.println("check");
             result = fc.showOpenDialog(frame);
@@ -143,20 +181,110 @@ public class Controller implements ActionListener, ListSelectionListener {
     }
 
     private void saveFile() {
+        try
+        {
         JFileChooser fc = new JFileChooser();
+        String headers = "";
+        String lines = "";
         int result = fc.showSaveDialog(frame);
-       
+        for (InvoiceHeader header : frame.getInvoiceHeadersList() )
+            {
+                headers += header.toString();
+                headers += "\n";
+                for (InvoiceLine line : header.getLines())
+                {
+                    lines += line.toString();
+                    lines += "\n";
+                }
+            }
+        if ( result == JFileChooser.APPROVE_OPTION)
+        {
+            File headerFile = fc.getSelectedFile();
+            FileWriter hedearfw = new FileWriter(headerFile);
+            hedearfw.write(headers);
+            hedearfw.flush();
+            hedearfw.close();
+            result = fc.showSaveDialog(frame);
+            if ( result == JFileChooser.APPROVE_OPTION)
+            {
+                File lineFile = fc.getSelectedFile();
+                FileWriter linefw = new FileWriter(lineFile);
+                linefw.write(lines);
+                linefw.flush();
+                linefw.close();
+            }
             
-        
+            
+        }
+       
+
+        }
+        catch (IOException ex) {
+            
+        }
     }
 
     private void createNewInvoice() {
+        createNewInvoiceDialog = new CreateNewInvoiceDialog(frame);
+        createNewInvoiceDialog.setVisible(true);
+      //  frame.setCreateNewInvoiceDialog(new CreateNewInvoiceDialog(frame));
+        //frame.getCreateNewInvoiceDialog().setVisible(true);
+
+    }
+    
+    
+    private void createInvoiceButton() {
+        createNewInvoiceDialog.setVisible(false);
+        String invName = createNewInvoiceDialog.getInvoiceCustomerName().getText();
+        String inveDate = createNewInvoiceDialog.getInvoiceDate().getText();
+        
+        createNewInvoiceDialog.dispose();
+        createNewInvoiceDialog = null;
+        try
+        {
+        Date invDate = df.parse(inveDate);
+        int id = 0;
+        for (InvoiceHeader header : frame.getInvoiceHeadersList())
+        {
+            if (header.getInvoiceNum() > id)
+            {
+                id = header.getInvoiceNum();
+            }
+        }
+        id++;
+        InvoiceHeader header = new InvoiceHeader(id, invDate, invName);
+        frame.getInvoiceHeadersList().add(header);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        
+        } catch (ParseException ex) {
+            
+        }
+                
+        
+       /* int invNum = 0;
+        for (InvoiceHeader inv : frame.getInvoicesArray()) {
+            if (inv.getNum() > invNum) {
+                invNum = inv.getNum();
+            }
+        }
+        invNum++;
+        InvoiceHeader newInv = new InvoiceHeader(invNum, custName, d);
+        frame.getInvoicesArray().add(newInv);
+        frame.getHeaderTableModel().fireTableDataChanged();
+        headerDialog.dispose();
+        headerDialog = null;*/
+    }
+    
+    private void cancelInoivceButton() {
+        createNewInvoiceDialog.setVisible(false);
+        createNewInvoiceDialog.dispose();
+        createNewInvoiceDialog = null;
     }
 
     private void deleteInvoice() {
         int invoiceData = frame.getInvoiceTable().getSelectedRow();
-        InvoiceHeader header = frame.getHeaderTableModel().getData().get(invoiceData);
-        frame.getHeaderTableModel().getData().remove(invoiceData);
+        InvoiceHeader header = frame.getHeaderTableModel().getHeaderData().get(invoiceData);
+        frame.getHeaderTableModel().getHeaderData().remove(invoiceData);
         frame.getHeaderTableModel().fireTableDataChanged();
         frame.setLineTableModel(new InvoiceLineTableModel(new ArrayList<InvoiceLine>()));
         frame.getInvoiceItem().setModel(frame.getLineTableModel());
@@ -165,20 +293,34 @@ public class Controller implements ActionListener, ListSelectionListener {
 
     private void createNewItem() {
         
+        
     }
 
     private void deleteItem() {
         int invoiceData = frame.getInvoiceItem().getSelectedRow();
         //ArrayList<InvoiceLine> invoiceLinesList = new ArrayList<>();
-        InvoiceLine lin = frame.getLineTableModel().getData().get(invoiceData);
-        frame.getHeaderTableModel().getData().remove(invoiceData);
+        InvoiceLine line = frame.getLineTableModel().getLineData().get(invoiceData);
+        frame.getLineTableModel().getLineData().remove(invoiceData);
         frame.getHeaderTableModel().fireTableDataChanged();
         frame.getLineTableModel().fireTableDataChanged();
-        frame.getInvoiceNumber().setText("" + lin.getHeader().getInvoiceTotal());
+        frame.getInvoiceNumber().setText("" + line.getHeader().getInvoiceTotal());
         //displayInvoices();
     }
-    //private void displayInvoices(){
-         //for (InvoiceHeader header :frame.getInvoiceHeadersList()) {
-          //   System.out.println(header);
-       //  }
+
+    private void createItemButton() {
+        
+    }
+
+    private void cancelCreateItem() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    
+
+    
+
+    
+
+    
+    
 }

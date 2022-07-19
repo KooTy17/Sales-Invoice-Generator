@@ -4,6 +4,8 @@
  */
 package salesinvoicegenerator.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -12,20 +14,21 @@ import javax.swing.table.AbstractTableModel;
  * @author KooTy
  */
 public class InvoiceHeaderTableModel extends AbstractTableModel{
-    private ArrayList<InvoiceHeader> data;
+    private ArrayList<InvoiceHeader> headerData;
     private String[] cols = {"Id", "Invoice Date", "Customer Name", "Invoice Total"};
+    private DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 
-    public InvoiceHeaderTableModel(ArrayList<InvoiceHeader> data) {
-        this.data = data;
+    public InvoiceHeaderTableModel(ArrayList<InvoiceHeader> headerData) {
+        this.headerData = headerData;
     }
 
-    public ArrayList<InvoiceHeader> getData() {
-        return data;
+    public ArrayList<InvoiceHeader> getHeaderData() {
+        return headerData;
     }
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return headerData.size();
     }
 
     @Override
@@ -35,13 +38,13 @@ public class InvoiceHeaderTableModel extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        InvoiceHeader header = data.get(rowIndex);
+        InvoiceHeader header = headerData.get(rowIndex);
         switch (columnIndex)
         {
             case 0:
                 return header.getInvoiceNum();
             case 1:
-                return header.getInvoiceDate();
+                return df.format(header.getInvoiceDate());
             case 2:
                 return header.getCustomerName();
             case 3:
